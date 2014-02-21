@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/x-component/x-select.png?v0.0.0)](https://travis-ci.org/x-component/x-select)
+[![Build Status](https://travis-ci.org/x-component/x-select.png?v0.0.1)](https://travis-ci.org/x-component/x-select)
 =======================================================================================================
 
 
@@ -120,10 +120,3 @@ Notes:
 
 If the `object` is a dom tree node, `select()` will call `object.ownerDocument.defaultView.$` and return the result. In this case css selectors supported by
 the underlying css selector engine are supported.
-
-# _select()
-
-select for JSON or DOM nodes:
-if obj is a dom node use the xui $ selector find result set as an array of dom elements, based on querySelectorAll();
-options root : use this as context if :root is given
-options self : include the obj itself in the search scope
