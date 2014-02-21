@@ -15,7 +15,7 @@
  *
  * Note: Per default the selecting of elments is done case insensitve and the following values are skipped from the result set `undefined`, `null`, `false`, `NaN`
  *
- * x-select is particularly usefull to handle deeply nested JSON structures as they are often returned by REST Services, and may evolve over time. (See examples)
+ * x-select is particularly usefull to handle deeply nested JSON structures as they are often returned by REST services. (See examples)
  *
  *
  * **usage**
