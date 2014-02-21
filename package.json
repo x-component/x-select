@@ -1,37 +1,37 @@
 {
-	"name"    : "x-select",
-	"version" : "0.0.0",
-	"license" : "MIT",
-	"dependencies" : {
-		"js-select" : "git://github.com/MauriceSchoenmakers/js-select.git#e51000ed77",
-		"x-common"  : "~0.0",
-		"x-log"     : "~0.0"
-	},
-	"description": "selecting items from JSON/DOM Tree using an extended json select language used by x-x.io x-components",
-	"keywords": [
-		"x-x",
-		"x-component",
-		"traverse",
-		"js-traverse",
-		"json",
-		"select",
-		"js-select",
-		"JSONSelect",
-		"selectors",
-		"query",
-		"REST"
-	],
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/x-component/x-select.git"
-	},
-	"devDependencies":{
-		"vows"    : "~0.7",
-		"dox-basic": "~0.0"
-	},
-	"main" : "select.js",
-	"scripts": {
-		"prepublish": "cat ./select.js | node ./node_modules/dox-basic/bin/dox-basic -m -t \"[![Build Status](https://travis-ci.org/x-component/$npm_package_name.png?v$npm_package_version)](https://travis-ci.org/x-component/$npm_package_name)\" > README.md",
-		"test"       : "vows ./test/*.test.js"
-	}
+  "name": "x-select",
+  "version": "0.0.1",
+  "license": "MIT",
+  "dependencies": {
+    "js-select": "git://github.com/MauriceSchoenmakers/js-select.git#e51000ed77",
+    "x-common": "~0.0",
+    "x-log": "~0.0"
+  },
+  "description": "selecting items from JSON/DOM Tree using an extended json select language used by x-x.io x-components",
+  "keywords": [
+    "x-x",
+    "x-component",
+    "traverse",
+    "js-traverse",
+    "json",
+    "select",
+    "js-select",
+    "JSONSelect",
+    "selectors",
+    "query",
+    "REST"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/x-component/x-select.git"
+  },
+  "devDependencies": {
+    "vows": "~0.7",
+    "dox-basic": "~0.0"
+  },
+  "main": "select.js",
+  "scripts": {
+    "prepublish": "cat ./select.js | node ./node_modules/dox-basic/bin/dox-basic -m -t \"[![Build Status](https://travis-ci.org/x-component/$npm_package_name.png?v$npm_package_version)](https://travis-ci.org/x-component/$npm_package_name)\" > README.md",
+    "test": "vows ./test/*.test.js"
+  }
 }
