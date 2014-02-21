@@ -7,7 +7,7 @@
     "x-common": "~0.0",
     "x-log": "~0.0"
   },
-  "description": "selecting items from JSON/DOM Tree using an extended json select language used by x-x.io x-components",
+  "description": "selecting items from JSON using an extended json select language used by x-x.io x-components",
   "keywords": [
     "x-x",
     "x-component",
