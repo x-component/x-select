@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/x-component/x-select.png?v0.0.1)](https://travis-ci.org/x-component/x-select)
+[![Build Status](https://travis-ci.org/x-component/x-select.png?v0.0.2)](https://travis-ci.org/x-component/x-select)
 =======================================================================================================
 
 
