@@ -15,7 +15,7 @@
  *
  * Note: Per default the selecting of elments is done case insensitve and the following values are skipped from the result set `undefined`, `null`, `false`, `NaN`
  *
- * x-select is particularly usefull to handle deeply nested JSON structures as they are often returned by REST services. (See examples)
+ * x-select is particularly usefull to handle deeply nested JSON structures as they are often returned by REST Services. (See examples)
  *
  *
  * **usage**
@@ -132,6 +132,12 @@ var
  * options root : use this as context if :root is given
  * options self : include the obj itself in the search scope
  */
+
+var $$=function(s,obj){ // simple dummy $ in case xui/jquery doesn't exist
+	var results = obj && obj.querySelectorAll ? obj.querySelectorAll(s) : null;
+	return results ? Array.prototype.slice.call(results) : [];
+};
+
 var _select = function(obj,s,options){
 	options = options || {};
 	
@@ -152,7 +158,9 @@ var _select = function(obj,s,options){
 		$      = win ? win.$ : null,
 		result;
 	
-	if( !$ ) return select(options.self?{object:obj}:obj, s, extend({caseInsensitive:true},options) );
+	if(doc && doc.querySelectorAll && win && !$) $=$$;
+	
+	if(!$) return select(options.self?{object:obj}:obj, s, extend({caseInsensitive:true},options) );
 	
 	s=s.replace(':root','');
 	
@@ -184,7 +192,7 @@ var _select = function(obj,s,options){
 		result = $(s,obj); //elementSelect(s,obj);
 	}
 	
-	result.forEach = result.each;
+	result.forEach = result.each || result.forEach;
 	
 	return result;
 };
@@ -193,7 +201,7 @@ var M;
 module.exports = extend(M=function F(obj, s/*!selectors string*/,options) {
 	try {
 		var exp=F.parse(s);
-		return (exp.string ? F.select(obj,exp.string,options) : ( F.eval(obj,exp,options)) ? F.not_empty : F.empty );
+		return (exp.string ? F.select(obj,exp.string,options) : ( F.eval(obj,exp,options)) ? F.not_empty : F.empty ); // jshint ignore:line
 	}catch( e ){
 		log.errorl && log.error('expression parsing error',{selector:s,error:e});
 	}
@@ -215,7 +223,7 @@ module.exports = extend(M=function F(obj, s/*!selectors string*/,options) {
 				forEach.call(this,function(e){
 					// is contained in any subsequent set to diff. from all, then it does not belong to the final set.
 					for(var i=s.length, equal=false; i-->1 && !equal; ) _select(obj,s[i],root).forEach( function(se){ equal=equal||equals(e,se); } );
-					if(!equal && !~options.skip.indexOf(e) ) cb.call(this,e);
+					if(!equal && ( !options.skip.contains || !options.skip.contains(e) ) ) cb.call(this,e);
 				});
 			}; })(result.forEach),
 			
@@ -241,7 +249,15 @@ module.exports = extend(M=function F(obj, s/*!selectors string*/,options) {
 	},{
 		// these values are skipped in for each and therefore influence first and empty
 		// p.e. a select with just a null as result is then regarded as empty.
-		skip:[void 0, null, NaN, false ]
+		skip:extend([void 0, null, NaN, false, [] ],{
+			contains:function(e){
+				for( var i=0,l=this.length;i<l;i++){
+					var v=this[i];
+					if( (Number.isNaN(v) && Number.isNaN(e)) || (!Number.isNaN(e) && (typeof(e) === 'object' ? equals(e,v) : e === v ))) return true;
+				}
+				return false;
+			}
+		})
 	}),
 	
 	empty:{
@@ -296,39 +312,39 @@ module.exports = extend(M=function F(obj, s/*!selectors string*/,options) {
 			top=stack.length>0?stack[stack.length-1]:null;
 			
 			// quoted string handling
-			if( '"'==t || "'"==t ){
+			if( '"'===t || "'"===t ){
 				var str='';// quoted string
 				do {
 					var i=s.next.indexOf(t);
 					if(-1===i) throw expected(t,s.next);
 					var c=s.next.substring(0,i);s.next=s.next.substring(i+1);
 					str += c;
-					if( c.length>0 && c.charAt(c.length-1)=='\\' ){ // escaped token
+					if( c.length>0 && c.charAt(c.length-1)==='\\' ){ // escaped token
 					  str += t;
 					}
-				} while( str.charAt(str.length-1)==t ); // escaped tokens
+				} while( str.charAt(str.length-1)===t ); // escaped tokens
 				
 				// if quotes where ' ',  switch them to "", so escape " in the string
-				if( "'"==t ){ str=str.replace(/\"/g,"\\\""); t='"';}
+				if( "'"===t ){ str=str.replace(/\"/g,"\\\""); t='"';}
 				
 				t={string:'"'+str+'"'};
 			}
 			
-			if(t && top && ('EXP'==top.type||'AND_EXP'==top.type||'AND'==top.type||'OR'==top.type)){
+			if(t && top && ('EXP'===top.type||'AND_EXP'===top.type||'AND'===top.type||'OR'===top.type)){
 				if(!top.finished){
-					     if('('  ==t){ stack.pop();stack.push(t,top); }  // EXP = ( EXP ) BEGIN
-					else if('or' ==t) throw missing(t,s);
-					else if('and'==t) throw missing(t,s);
-					else if('not'==t){ stack.pop();stack.push(t,top); } // EXP = not EXP 
+					     if('('  ===t){ stack.pop();stack.push(t,top); }  // EXP = ( EXP ) BEGIN
+					else if('or' ===t) throw missing(t,s);
+					else if('and'===t) throw missing(t,s);
+					else if('not'===t){ stack.pop();stack.push(t,top); } // EXP = not EXP 
 					else if(t.string){ extend(top,t);top.finished=true; } // EXP = STRING await next strings
-					else if(')'  ==t) throw missing(t,s);
+					else if(')'  ===t) throw missing(t,s);
 				} else {
-					     if('('  ==t){ if(void 0 === top.string) throw unexpected(t,s); stack.push(t,{type:'EXP',string:'',finished:true}); } // STRING ( STRING ) BEGIN
-					else if('or' ==t){ reduce(); stack.push(t,{type:'AND_EXP'}); } // EXP or AND_EXP
-					else if('and'==t){ reduce(); stack.push(t,{type:'EXP'}); } // EXP and EXP
-					else if('not'==t) throw unexpected(t,s);
+					     if('('  ===t){ if(void 0 === top.string) throw unexpected(t,s); stack.push(t,{type:'EXP',string:'',finished:true}); } // STRING ( STRING ) BEGIN
+					else if('or' ===t){ reduce(); stack.push(t,{type:'AND_EXP'}); } // EXP or AND_EXP
+					else if('and'===t){ reduce(); stack.push(t,{type:'EXP'}); } // EXP and EXP
+					else if('not'===t) throw unexpected(t,s);
 					else if(t.string){ if(void 0 === top.string) throw unexpected(t,s); else top.string+=t.string; }
-					else if(')'  ==t){ reduce(); stack.push(t); reduce(); }
+					else if(')'  ===t){ reduce(); stack.push(t); reduce(); }
 				}
 			}
 			else {
@@ -350,37 +366,37 @@ module.exports = extend(M=function F(obj, s/*!selectors string*/,options) {
 				if(top.finished){
 					
 					// reduce not EXP to NOT, and not NOT(EXP) to EXP
-					if('not'==top_1 && top.type ){ // not EXP -> NOT_EXP
+					if('not'===top_1 && top.type ){ // not EXP -> NOT_EXP
 						stack.pop();stack.pop();
-						if('NOT'==top.type) stack.push(top.exp);
+						if('NOT'===top.type) stack.push(top.exp);
 						else stack.push({type:'NOT',exp:top,finished:true});
 						reduced=true;
 					}
 					// reduce EXP and EXP to AND
-					else if('and'==top_1 && top_2 && top_2.type /*!EXP,NOT,AND,OR*/){
+					else if('and'===top_1 && top_2 && top_2.type /*!EXP,NOT,AND,OR*/){
 						stack.pop();stack.pop();stack.pop();
 						stack.push({type:'AND',lhs:top_2,rhs:top,finished:true});
 						reduced=true;
 					}
 					// reduce EXP or EXP to OR
-					else if('or'==top_1 && top_2 && top_2.type && ('AND_EXP'!==top.type || final) /*!EXP,NOT,AND,OR*/){
+					else if('or'===top_1 && top_2 && top_2.type && ('AND_EXP'!==top.type || final) /*!EXP,NOT,AND,OR*/){
 						stack.pop();stack.pop();stack.pop();
 						stack.push({type:'OR',lhs:top_2,rhs:top,finished:true});
 						reduced=true;
 					}
 				}
-				else if( ')'==top ){
+				else if(')'===top){
 					// reduce STRING ( STRING ) to STRING , in this case the brackets belong to JSONSelect
-					if( (void 0 !== top_1.string) && '('==top_2 && top_3 && (void 0 !== top_3.string) ){
+					if( (void 0 !== top_1.string) && '('=== top_2 && top_3 && (void 0 !== top_3.string) ){
 						stack.pop();stack.pop();stack.pop();stack.pop();
 						// BRACKETS belonged to JSONSelect expression
 						// NOTE: the space ' ' *behind* the ')' is significant as selector separator!
-						top_3.string+='( '+top_1.string+' ) '; 
+						top_3.string+='( '+top_1.string+' ) ';
 						stack.push(top_3);
 						reduced=true;
 					}
 					// reduce ( EXP ) to EXP, and  NOT-STRING ( STRING ) to NOT_STRING EXP
-					else if( '('==top_2 && ( !top_3 || (void 0 === top_3.string) ) ){
+					else if('('===top_2 && (!top_3||(void 0 === top_3.string)) ){
 						stack.pop();stack.pop();stack.pop();
 						stack.push(top_1);
 						reduced=true;
@@ -399,9 +415,9 @@ module.exports = extend(M=function F(obj, s/*!selectors string*/,options) {
 	
 	eval:function F(obj,exp,options){
 		     if(exp.string) return (!M.select(obj,exp.string,options).empty());
-		else if('AND' ==exp.type) return ( F(obj,exp.lhs,options) && F(obj,exp.rhs,options));
-		else if('OR'  ==exp.type) return ( F(obj,exp.lhs,options) || F(obj,exp.rhs,options));
-		else if('NOT' ==exp.type) return (!F(obj,exp.exp,options));
+		else if('AND' === exp.type) return ( F(obj,exp.lhs,options) && F(obj,exp.rhs,options));
+		else if('OR'  === exp.type) return ( F(obj,exp.lhs,options) || F(obj,exp.rhs,options));
+		else if('NOT' === exp.type) return (!F(obj,exp.exp,options));
 		else return false;
 	}
 });
