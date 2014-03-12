@@ -1,6 +1,6 @@
 {
   "name": "x-select",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "license": "MIT",
   "dependencies": {
     "js-select": "git://github.com/MauriceSchoenmakers/js-select.git#e51000ed77",
