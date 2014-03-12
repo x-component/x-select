@@ -249,15 +249,7 @@ module.exports = extend(M=function F(obj, s/*!selectors string*/,options) {
 	},{
 		// these values are skipped in for each and therefore influence first and empty
 		// p.e. a select with just a null as result is then regarded as empty.
-		skip:extend([void 0, null, NaN, false, [] ],{
-			contains:function(e){
-				for( var i=0,l=this.length;i<l;i++){
-					var v=this[i];
-					if( (Number.isNaN(v) && Number.isNaN(e)) || (!Number.isNaN(e) && (typeof(e) === 'object' ? equals(e,v) : e === v ))) return true;
-				}
-				return false;
-			}
-		})
+		skip:[ void 0, null, NaN, false, [] ]
 	}),
 	
 	empty:{
@@ -426,12 +418,18 @@ M.skip = M.select.skip ;
 (function F(array){
 	return extend(array,{
 		not:function(v){
-			return F(this.filter(function(e){ return v!==e; }));
+			return F(this.filter(function(e){ return !equals(e,v,true); }));
 		},
 		add:function(v){
 			var result = [].concat(this);
 			result.push(v);
 			return F(result);
+		},
+		contains:function FF(e){
+			for( var i=0,l=this.length;i<l;i++){
+				if( equals(this[i],e,true) ) return true;
+			}
+			return false;
 		}
 	});
 })(M.skip);
