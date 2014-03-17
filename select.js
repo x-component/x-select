@@ -126,6 +126,16 @@ var
 	equals = require('x-common').equals,
 	extend = require('x-common').extend;
 
+var select2=function(obj,s,options){
+	s = s ? s.split(','):[];
+	for(var i=0,l=s.length;i<l;i++){
+		var ss=s[i].trim();
+		if( ss && ss[0] === '>' )s[i]=':root '+ss;
+	}
+	s=s.join(',');
+	return select(options.self?{object:obj}:obj, s, extend({caseInsensitive:true},options) );
+};
+
 /*!
  * select for JSON or DOM nodes:
  * if obj is a dom node use the xui $ selector find result set as an array of dom elements, based on querySelectorAll();
@@ -150,7 +160,7 @@ var _select = function(obj,s,options){
 	
 	if( !obj ) return [];
 	
-	if( !obj.nodeType ) return select(options.self?{object:obj}:obj, s, extend({caseInsensitive:true},options) );
+	if( !obj.nodeType ) return select2(obj, s, options);
 	
 	var
 		doc    = obj.ownerDocument || obj,
@@ -160,7 +170,7 @@ var _select = function(obj,s,options){
 	
 	if(doc && doc.querySelectorAll && win && !$) $=$$;
 	
-	if(!$) return select(options.self?{object:obj}:obj, s, extend({caseInsensitive:true},options) );
+	if(!$) return select2(obj, s, options);
 	
 	s=s.replace(':root','');
 	

@@ -39,7 +39,7 @@ var fixture_users = {
 
 var suite = vows.describe('select');
 suite.addBatch(x(
-	/*topic('simple expressions',x(
+	topic('simple expressions',x(
 		exp({foo:{a:1}},'.foo',{},x(
 			is_not_empty(),
 			is_equal([{a:1}])
@@ -54,13 +54,19 @@ suite.addBatch(x(
 		exp({foo:{a:null}},'.a',{},x(
 			is_empty()
 		))
-	)),*/
+	)),
 	topic('{}',x(
 		exp({foo:{a:{}}},'.a',{},x(
 			is_not_empty(),
 			is_equal([{}])
 		))
-	))/*,
+	)),
+	topic('> selector',x(
+		exp({foo:2,bar:{foo:1}},'> .foo',{},x(
+			is_not_empty(),
+			is_equal([2])
+		))
+	)),
 	topic('union ,',x(
 		exp({foo:{a:1},b:2},'.a , .b',{},x(
 			is_not_empty(),
@@ -130,16 +136,15 @@ suite.addBatch(x(
 	topic('val',x(
 		exp({foo:'stringtest'},".foo:val('stringtest')",{},x(
 			is_equal(['stringtest'])
-		))*/
-		/*,
+		))/*,
 		//this doesn't work because JSONSelect doesn't support it... so what?
-		exp({foo:100},".foo:epr(x=100)",{},x(
+		/*exp({foo:100},".foo:epr(x=100)",{},x(
 			is_equal([100])
 		)),
-		exp({foo:false},".foo:val(false)",{},x(
+		exp({foo:false},".foo:val(false)",{skip:select.skip.not(false)},x(
 			is_equal([false])
 		))*/
-/*	)),
+	)),
 	topic('expressionString', x(
 		exp({blafasel:"bla"}, '.blafasel:expr(x="bla")',{},x(
 			is_equal(["bla"]),
@@ -177,5 +182,5 @@ suite.addBatch(x(
 		exp(fixture_users, '.person:has( .age:expr( x < 30 || x >= 40 ) )',{},x(
 			count(2)
 		))
-	))*/
+	))
 )).exportTo(module,{error:false});
