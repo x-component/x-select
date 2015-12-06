@@ -182,5 +182,23 @@ suite.addBatch(x(
 		exp(fixture_users, '.person:has( .age:expr( x < 30 || x >= 40 ) )',{},x(
 			count(2)
 		))
+	)),
+	topic('test boolean and and or', x( // there was a parsing error for the AND_EXPR after 'or' without an and
+		exp(fixture_users,'.person .name:val("joe") and .person .age:expr( x = 20 ) and .person .friends or .person .age:expr( x> 30 )',{},x(
+			is_equal([true]),
+			is_not_empty()
+		))
+	)),
+	topic('test - intersection', x(
+		exp(fixture_users,'.person:has( .name:val("joe") ) - .person:has( .age:expr( x = 20) )',{},x(
+			is_equal([]),
+			is_empty()
+		))
+	)),
+	topic('test union', x(
+		exp(fixture_users,'.person:has( .name:val("joe") ) , .person:has( .age:expr( x = 35) )',{},x(
+			is_equal([{ name: 'joe', age: 20, address: { street: 's1' } }, { name: 'mary', age: 35, friends: { person: { name: 'bob' } } } ]),
+			is_not_empty()
+		))
 	))
 )).exportTo(module,{error:false});

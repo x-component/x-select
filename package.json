@@ -1,11 +1,11 @@
 {
   "name": "x-select",
-  "version": "0.0.4",
+  "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
     "js-select": "git://github.com/MauriceSchoenmakers/js-select.git#e51000ed77",
-    "x-common": "~0.0",
-    "x-log": "~0.0"
+    "x-common": "1.x.x",
+    "x-log": "1.x.x"
   },
   "description": "selecting items from JSON using an extended json select language used by x-x.io x-components",
   "keywords": [
@@ -26,12 +26,12 @@
     "url": "https://github.com/x-component/x-select.git"
   },
   "devDependencies": {
-    "vows": "~0.7",
-    "dox-basic": "~0.0"
+    "vows": "latest",
+    "x-publish": "1.x.x"
   },
   "main": "select.js",
   "scripts": {
-    "prepublish": "cat ./select.js | node ./node_modules/dox-basic/bin/dox-basic -m -t \"[![Build Status](https://travis-ci.org/x-component/$npm_package_name.png?v$npm_package_version)](https://travis-ci.org/x-component/$npm_package_name)\" > README.md",
+	"prepublish": "./node_modules/x-publish/scripts/prepublish.sh",
     "test": "vows ./test/*.test.js"
   }
 }

@@ -167,7 +167,7 @@ var _select = function(obj,s,options){
 		win    = doc.defaultView,
 		$      = win ? win.$ : null,
 		result;
-	
+	debugger;
 	if(doc && doc.querySelectorAll && win && !$) $=$$;
 	
 	if(!$) return select2(obj, s, options);
@@ -179,7 +179,7 @@ var _select = function(obj,s,options){
 	// it is not w3c conform as it doesn't limit itself on the real subtree
 	// and if there is no parent it takes the node itself as part of the
 	// context...
-	if(obj.nodeType == 1 && obj.parentNode ){ // element with parent
+	if(obj.nodeType === 1 && obj.parentNode ){ // element with parent
 		var
 			placeholder = obj.ownerDocument.createElement('span'),
 			context     = !options.self ? obj.ownerDocument.createElement('div') : null,
@@ -355,7 +355,7 @@ module.exports = extend(M=function F(obj, s/*!selectors string*/,options) {
 		}
 		
 		function reduce(final){
-			var top_1,top_2,top_3,reduced;
+			var top_1,top_2,top_3,top_4,reduced;
 			do{
 				//debugger;
 				
@@ -364,6 +364,7 @@ module.exports = extend(M=function F(obj, s/*!selectors string*/,options) {
 				top_1=stack.length>1?stack[stack.length-2]:null;
 				top_2=stack.length>2?stack[stack.length-3]:null;
 				top_3=stack.length>3?stack[stack.length-4]:null;
+				top_4=stack.length>4?stack[stack.length-5]:null;
 				
 				if(top.finished){
 					
@@ -387,7 +388,13 @@ module.exports = extend(M=function F(obj, s/*!selectors string*/,options) {
 						reduced=true;
 					}
 				}
-				else if(')'===top){
+				else if(')'===top ){
+					// reduce ( EXP or EXP|AND_EXP ) to OR
+					if( top_1 && top_1.type && 'or'===top_2 && top_3 && top_3.type && '('=== top_4 ){
+						stack.pop();stack.pop();stack.pop();stack.pop();stack.pop();
+						stack.push({type:'OR',lhs:top_3,rhs:top_1,finished:true});
+						reduced=true;
+					}
 					// reduce STRING ( STRING ) to STRING , in this case the brackets belong to JSONSelect
 					if( (void 0 !== top_1.string) && '('=== top_2 && top_3 && (void 0 !== top_3.string) ){
 						stack.pop();stack.pop();stack.pop();stack.pop();
