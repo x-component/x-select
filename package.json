@@ -1,6 +1,6 @@
 {
   "name": "x-select",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "dependencies": {
     "js-select": "git+https://github.com/MauriceSchoenmakers/js-select.git#e51000ed77",
@@ -31,7 +31,7 @@
   },
   "main": "select.js",
   "scripts": {
-	"prepublish": "./node_modules/x-publish/scripts/prepublish.sh",
+    "prepublish": "./node_modules/x-publish/scripts/prepublish.sh",
     "test": "vows ./test/*.test.js"
   }
 }
