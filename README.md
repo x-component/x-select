@@ -2,19 +2,7 @@
 
 [Build Status](https://travis-ci.org/x-component/x-select.png?v1.0.0)](https://travis-ci.org/x-component/x-select)
 
-- [./public/js/jsonselect-paths.js](#publicjsjsonselect-pathsjs) 
-- [./public/js/sizzle.js](#publicjssizzlejs) 
 - [./select.js](#selectjs) 
-
-# ./public/js/jsonselect-paths.js
-
-
-
-
-# ./public/js/sizzle.js
-
-
-
 
 # ./select.js
 

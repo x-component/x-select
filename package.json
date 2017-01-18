@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "license": "MIT",
   "dependencies": {
-    "js-select": "git://github.com/MauriceSchoenmakers/js-select.git#e51000ed77",
+    "js-select": "git+https://github.com/MauriceSchoenmakers/js-select.git#e51000ed77",
     "x-common": "1.x.x",
     "x-log": "1.x.x"
   },
